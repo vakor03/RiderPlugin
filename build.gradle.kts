@@ -28,10 +28,21 @@ allprojects {
 }
 
 repositories {
+    mavenCentral()
     intellijPlatform {
         defaultRepositories()
-        jetbrainsRuntime()
     }
+
+    // Correct repository for ReSharper packages
+    maven {
+        url = uri("https://www.nuget.org/api/v2/")
+        content {
+            includeGroup("JetBrains.ReSharper")
+        }
+    }
+
+    // Alternative JetBrains repository
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 }
 
 tasks.wrapper {
@@ -153,20 +164,23 @@ tasks.buildPlugin {
 dependencies {
     intellijPlatform {
         // Use local Rider installation - REPLACE WITH YOUR ACTUAL PATH
-        local("C:/Users/myksv/AppData/Local/Programs/Rider")
+//        local("C:/Users/myksv/AppData/Local/Programs/Rider")
         // Alternative: if you want to use downloaded version instead, uncomment this:
         // rider(ProductVersion, useInstaller = false)
 
-        jetbrainsRuntime()
+        rider("2025.1.2", useInstaller = false) // Base version for development
 
-        // TODO: add plugins
-        // bundledPlugin("uml")
-        // bundledPlugin("com.jetbrains.ChooseRuntime:1.0.9")
+        jetbrainsRuntime()
+        pluginVerifier()
+        zipSigner()
+        instrumentationTools()
     }
+
+
+
 }
 
 tasks.runIde {
-    // Match Rider's default heap size of 1.5Gb (default for runIde is 512Mb)
     maxHeapSize = "1500m"
 }
 

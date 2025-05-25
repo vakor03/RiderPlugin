@@ -16,16 +16,11 @@ using JetBrains.Util;
     Name = nameof(InjectDependencyContextAction),
     Description = "Inject dependency for MonoBehaviour field",
     Priority = 10)]
-public class InjectDependencyContextAction : ContextActionBase {
-    private readonly ICSharpContextActionDataProvider _provider;
-
-    public InjectDependencyContextAction(ICSharpContextActionDataProvider provider) =>
-        _provider = provider;
-
-    public override string Text => "Inject Dependency";
+public class InjectDependencyContextAction(ICSharpContextActionDataProvider provider) : ContextActionBase {
+    public override string Text => "Inject Dependency via [Inject]";
 
     public override bool IsAvailable(IUserDataHolder cache) {
-        IFieldDeclaration fieldDeclaration = _provider.GetSelectedElement<IFieldDeclaration>();
+        IFieldDeclaration fieldDeclaration = provider.GetSelectedElement<IFieldDeclaration>();
         if (fieldDeclaration == null)
             return false;
 
@@ -36,8 +31,22 @@ public class InjectDependencyContextAction : ContextActionBase {
         if (containingClass == null)
             return false;
 
-        return InheritsFromMonoBehaviour(containingClass);
+        if (!InheritsFromMonoBehaviour(containingClass))
+            return false;
+
+        string fieldName = fieldDeclaration.DeclaredName;
+        string parameterName = GetParameterName(fieldName);
+    
+        IMethodDeclaration injectMethod = FindInjectDependenciesMethod(containingClass);
+        if (injectMethod != null && IsFieldAlreadyInjected(injectMethod, parameterName, fieldName))
+            return false;
+
+        return true;
     }
+
+    private bool IsFieldAlreadyInjected(IMethodDeclaration injectMethod, string parameterName, string fieldName) =>
+        injectMethod.ParameterDeclarations
+            .Any(p => p.DeclaredName == parameterName);
 
     private bool IsPrivateField(IFieldDeclaration fieldDeclaration) {
         AccessRights accessRights = fieldDeclaration.GetAccessRights();
@@ -55,7 +64,7 @@ public class InjectDependencyContextAction : ContextActionBase {
     }
 
     protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress) {
-        IFieldDeclaration fieldDeclaration = _provider.GetSelectedElement<IFieldDeclaration>();
+        IFieldDeclaration fieldDeclaration = provider.GetSelectedElement<IFieldDeclaration>();
         if (fieldDeclaration == null)
             return null;
 
@@ -77,11 +86,7 @@ public class InjectDependencyContextAction : ContextActionBase {
         else
             CreateInjectMethod(factory, containingClass, typeName, parameterName, fieldName);
 
-        return textControl => {
-            // using (WriteLockCookie.Create()) {
-
-            // }
-        };
+        return textControl => { };
     }
 
     private void CreateInjectMethod(CSharpElementFactory factory, IClassDeclaration classDeclaration,

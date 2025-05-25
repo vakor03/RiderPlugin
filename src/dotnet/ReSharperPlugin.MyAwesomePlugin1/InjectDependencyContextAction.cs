@@ -12,7 +12,7 @@ using JetBrains.TextControl;
 using JetBrains.Util;
 
 [ContextAction(
-    Group = CSharpContextActions.GroupID,
+    // Group = CSharpContextActions.GroupID,
     Name = nameof(InjectDependencyContextAction),
     Description = "Inject dependency for MonoBehaviour field",
     Priority = 10)]

@@ -31,6 +31,7 @@ repositories {
     mavenCentral()
     intellijPlatform {
         defaultRepositories()
+        jetbrainsRuntime()
     }
 
     // Correct repository for ReSharper packages

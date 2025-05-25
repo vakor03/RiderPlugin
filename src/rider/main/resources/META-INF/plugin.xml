@@ -23,5 +23,20 @@
 
   <idea-version since-build="251.0" until-build="251.*"/>
   <depends>com.intellij.modules.rider</depends>
+<!--  <extensions defaultExtensionNs="com.intellij">-->
+<!--    <applicationConfigurable-->
+<!--            parentId="tools"-->
+<!--            instance="com.jetbrains.rider.plugins.myawesomeplugin1.AlwaysIndexedProjectsConfigurable"-->
+<!--            id="AlwaysIndexedProjects"-->
+<!--            displayName="Always Indexed Projects"/>-->
+<!--  </extensions>-->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationConfigurable
+            parentId="tools"
+            instance="com.jetbrains.rider.plugins.myawesomeplugin1.TestSettingsPage"
+            id="TestSettings"
+            displayName="Test Settings"/>
+  </extensions>
 
 </idea-plugin>

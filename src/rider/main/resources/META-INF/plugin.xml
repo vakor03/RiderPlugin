@@ -37,6 +37,12 @@
             instance="com.jetbrains.rider.plugins.myawesomeplugin1.TestSettingsPage"
             id="TestSettings"
             displayName="Test Settings"/>
+    <applicationConfigurable
+            parentId="tools"
+            instance="com.jetbrains.rider.plugins.myawesomeplugin1.SamplePage"
+            id="SamplePage"
+            bundle="messages.OptionPagesBundle"
+            key="configurable.name.optionpages.options.title" />
   </extensions>
 
 </idea-plugin>

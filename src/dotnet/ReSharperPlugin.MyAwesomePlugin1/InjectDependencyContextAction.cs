@@ -16,11 +16,15 @@ using JetBrains.Util;
     Name = nameof(InjectDependencyContextAction),
     Description = "Inject dependency for MonoBehaviour field",
     Priority = 10)]
-public class InjectDependencyContextAction(ICSharpContextActionDataProvider provider) : ContextActionBase {
+public class InjectDependencyContextAction : ContextActionBase {
+    private readonly ICSharpContextActionDataProvider _provider;
+    public InjectDependencyContextAction(ICSharpContextActionDataProvider provider) {
+        _provider = provider;
+    }
     public override string Text => "Inject Dependency via [Inject]";
 
     public override bool IsAvailable(IUserDataHolder cache) {
-        IFieldDeclaration fieldDeclaration = provider.GetSelectedElement<IFieldDeclaration>();
+        IFieldDeclaration fieldDeclaration = _provider.GetSelectedElement<IFieldDeclaration>();
         if (fieldDeclaration == null)
             return false;
 
@@ -64,7 +68,7 @@ public class InjectDependencyContextAction(ICSharpContextActionDataProvider prov
     }
 
     protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress) {
-        IFieldDeclaration fieldDeclaration = provider.GetSelectedElement<IFieldDeclaration>();
+        IFieldDeclaration fieldDeclaration = _provider.GetSelectedElement<IFieldDeclaration>();
         if (fieldDeclaration == null)
             return null;
 
